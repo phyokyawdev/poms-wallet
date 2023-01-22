@@ -28,6 +28,10 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "permissions": [
+      "NETWORK_STATE",
+      "INTERNET"
+    ]
   }
 }
