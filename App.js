@@ -1,8 +1,8 @@
 // setup Buffer or process
 import 'node-libs-expo/globals';
-import 'react-native-get-random-values';
 
-import * as Random from 'expo-random';
+// fix for old browser error
+import 'react-native-get-random-values';
 
 // implement window.getRandomValues(), for packages that rely on it
 if (typeof window === 'object') {
@@ -24,8 +24,6 @@ if (typeof window === 'object') {
   }
 }
 
-//"postinstall": "node_modules/.bin/rn-nodeify --install crypto,assert,stream --hack"
-
 import React, { useContext } from 'react';
 import { View, Text, Button, TextInput, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -36,9 +34,8 @@ import EnrollProduct from './screens/EnrollProduct';
 import ShipProduct from './screens/ShipProduct';
 import ReceiveProduct from './screens/ReceiveProduct';
 import Test from './screens/Test';
-import AppContextProvider from './AppContextProvider';
-import styles from './styles';
-import AppContext from './AppContext';
+import styles from './screens/styles';
+import AppContext, { AppContextProvider } from './AppContext';
 import Account from './screens/Account';
 
 /**
@@ -46,8 +43,7 @@ import Account from './screens/Account';
  * =====
  * -
  */
-
-//     "postinstall": "node_modules/.bin/rn-nodeify --install crypto,assert,stream --hack"
+const Stack = createNativeStackNavigator();
 
 function LogoTitle() {
   return (
@@ -58,63 +54,36 @@ function LogoTitle() {
   );
 }
 
-function CreatePostScreen({ navigation, route }) {
-  const [postText, setPostText] = React.useState('');
-
-  return (
-    <>
-      <TextInput
-        multiline
-        placeholder="What's on your mind?"
-        style={{ height: 200, padding: 10, backgroundColor: 'white' }}
-        value={postText}
-        onChangeText={setPostText}
-      />
-      <Button
-        title='Done'
-        onPress={() => {
-          // Pass and merge params back to home screen
-          navigation.navigate({
-            name: 'Home',
-            params: { post: postText },
-            merge: true
-          });
-        }}
-      />
-    </>
-  );
-}
-
-function DetailsScreen({ route, navigation }) {
-  const { itemId, otherParam } = route.params;
-
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Details Screen</Text>
-      <Text>itemId: {JSON.stringify(itemId)}</Text>
-      <Text>otherParam: {JSON.stringify(otherParam)}</Text>
-      <Button
-        title='Go to Details... again'
-        onPress={() => navigation.push('Details')}
-      />
-      <Button title='Go to Home' onPress={() => navigation.navigate('Home')} />
-      <Button title='Go back' onPress={() => navigation.goBack()} />
-      <Button
-        title='Go back to first screen in stack'
-        onPress={() => navigation.popToTop()}
-      />
-    </View>
-  );
-}
-
-const Stack = createNativeStackNavigator();
-
 function ServerAddress() {
   const { state } = useContext(AppContext);
 
   return (
     <View>
-      <Text style={styles.title}>Server Address: {state.value}</Text>
+      <Text style={styles.title}>Server Address: {state.serverIpAddress}</Text>
+    </View>
+  );
+}
+
+function CurrentAccountAddress() {
+  const { state } = useContext(AppContext);
+
+  return (
+    <View>
+      <Text style={styles.title}>{state.currentAccount.address}</Text>
+    </View>
+  );
+}
+
+/**
+ * HERDER COMPONENT FOR ALL SCREEN
+ * - server ip address
+ * - current account address
+ */
+function Header() {
+  return (
+    <View>
+      <ServerAddress />
+      <CurrentAccountAddress />
     </View>
   );
 }

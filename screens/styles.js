@@ -6,11 +6,11 @@ export default StyleSheet.create({
     fontWeight: 'bold'
   },
   label: {
-    margin: 12
+    margin: 8
   },
   input: {
     height: 40,
-    margin: 12,
+    margin: 8,
     borderWidth: 1,
     padding: 10
   },
@@ -34,6 +34,10 @@ export default StyleSheet.create({
     marginVertical: 8,
     borderBottomColor: '#737373',
     borderBottomWidth: StyleSheet.hairlineWidth
+  },
+  middle: {
+    flex: 1,
+    justifyContent: 'center'
   },
   bottom: {
     flex: 1,

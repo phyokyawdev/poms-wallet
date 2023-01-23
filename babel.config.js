@@ -13,8 +13,7 @@ module.exports = (api) => {
           alias: {
             crypto: './node_modules/expo-crypto',
             assert: './node_modules/assert',
-            stream: './node_modules/stream',
-            randomBytes: './node_modules/expo-random'
+            stream: './node_modules/stream'
           }
         }
       ],

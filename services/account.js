@@ -1,4 +1,5 @@
 import * as ethWallet from 'ethereumjs-wallet';
+import * as util from '@ethereumjs/util';
 
 export const create = () => {
   const addressData = ethWallet.default.generate();
@@ -21,6 +22,17 @@ export const create = () => {
    * Public Key
    * - no practical use for public key, so it is omitted.
    */
+  return {
+    privateKey,
+    address
+  };
+};
+
+export const createFromPrivateKey = (privateKey) => {
+  const privateKeyBuffer = util.toBuffer(privateKey);
+  const addressBuffer = util.privateToAddress(privateKeyBuffer);
+  const address = util.bufferToHex(addressBuffer);
+
   return {
     privateKey,
     address

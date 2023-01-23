@@ -4,17 +4,19 @@ import QRCode from 'react-native-qrcode-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppContext from '../AppContext';
 
-import styles from '../styles';
+import styles from './styles';
 /**
  * Component for testing
  * - show address of currently selected account
  * - show qr code
  * - show back
+ *
+ * - create new account
+ *  - replace current account inside context
  */
 
 function Account({ navigation }) {
   const { state } = useContext(AppContext);
-  console.log(state.currentAccount);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -28,7 +30,9 @@ function Account({ navigation }) {
           {state.currentAccount.address}
         </Text>
         <View>
-          <QRCode value={state.currentAccount.address} />
+          {state.currentAccount.address && (
+            <QRCode value={state.currentAccount.address} />
+          )}
         </View>
       </View>
 

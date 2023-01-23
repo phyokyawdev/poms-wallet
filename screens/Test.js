@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BarCodeScanner, Constants } from 'expo-barcode-scanner';
 import AppContext from '../AppContext';
 
-import styles from '../styles';
+import styles from './styles';
 /**
  * Component for testing
  * - setup axios

@@ -1,52 +1,42 @@
 import axios from 'axios';
 import * as React from 'react';
-import { Button, Text, TextInput, View } from 'react-native';
+import { Alert, Button, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import styles from '../styles';
+import styles from './styles';
 import AppContext from '../AppContext';
 import * as transaction from '../services/transaction';
 
 /**
- *
+ * ENROLL PRODUCT
+ * -
  */
 
 function EnrollProduct({ navigation }) {
-  const [productCode, setProductCode] = React.useState('');
   const { state } = React.useContext(AppContext);
+  const [productCode, setProductCode] = React.useState('');
 
   const handleSubmit = async () => {
     // sign transaction
 
-    /**
-     * method signature
-     * - transaction.create(manufacturerPrivateKey, {
-     *    methodName: 'enrollProduct',
-     *    payloads: [productCode]
-     *  })
-     */
-
     const txParams = {
       methodName: 'enrollProduct',
-      payloads: ['123456']
+      payloads: [productCode]
     };
 
-    console.log(txParams);
-
-    const tx = transaction.create(
-      '0x78cafb987e3b90cecadd70af6d8b065d194d9de9ba4b7b39a5ca046019762138',
-      txParams
-    );
+    const tx = transaction.create(state.currentAccount.privateKey, txParams);
 
     try {
-      console.log(tx);
       const { data } = await axios.post(
         `${state.serverIpAddress}/transactions`,
         tx
       );
-      // show response data as alert
-      console.log(data);
+
+      Alert.alert('successfully submitted');
+
+      // reset value
+      setProductCode('');
     } catch (error) {
-      console.log(error.response.data);
+      Alert.alert(error.response.data);
     }
   };
 
@@ -63,7 +53,7 @@ function EnrollProduct({ navigation }) {
         </Text>
         <TextInput
           style={styles.input}
-          placeholder='type ip address of server'
+          placeholder='type product code'
           onChangeText={(text) => setProductCode(text)}
           defaultValue={productCode}
         />
