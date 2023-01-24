@@ -3,8 +3,10 @@ import { Alert, Button, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BarCodeScanner, Constants } from 'expo-barcode-scanner';
 import AppContext from '../AppContext';
+import * as transaction from '../services/transaction';
 
 import styles from './styles';
+import axios from 'axios';
 
 /**
  *
@@ -28,7 +30,7 @@ function ShipProduct({ navigation }) {
     };
 
     getBarCodeScannerPermissions();
-  }, []);
+  });
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
@@ -44,6 +46,7 @@ function ShipProduct({ navigation }) {
       };
 
       setTx(transaction.create(state.currentAccount.privateKey, txParams));
+
       return;
     }
 
@@ -72,16 +75,16 @@ function ShipProduct({ navigation }) {
   }
 
   return (
-    <View>
+    <View style={styles.container}>
       <SafeAreaView style={styles.container}>
         <View>
           <Text style={styles.title}>
-            <Text style={styles.titleText}>Ship Product</Text>
+            <Text style={styles.titleText}>SHIP PRODUCT</Text>
           </Text>
         </View>
       </SafeAreaView>
 
-      <ScrollView>
+      <ScrollView automaticallyAdjustKeyboardInsets={true}>
         <View style={styles.body}>
           <View>
             <Text selectable={true} style={styles.label}>
@@ -90,7 +93,7 @@ function ShipProduct({ navigation }) {
             <BarCodeScanner
               barCodeTypes={[Constants.BarCodeType.qr]}
               onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-              style={{ height: 200, margin: 12 }}
+              style={{ height: 200, margin: 8 }}
             />
             {scanned && (
               <Button
@@ -123,12 +126,16 @@ function ShipProduct({ navigation }) {
           )}
         </View>
 
+        <View style={{ height: 30 }} />
+
         <View style={styles.bottom}>
           <Button
             title='Go to Home'
             onPress={() => navigation.navigate('Home')}
           />
         </View>
+
+        <View style={{ height: 30 }} />
       </ScrollView>
     </View>
   );

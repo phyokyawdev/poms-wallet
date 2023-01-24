@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
-import { Alert, Button, Text, TextInput, View } from 'react-native';
+import { Alert, Button, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppContext from '../AppContext';
 import styles from './styles';
@@ -39,25 +39,22 @@ function SetupConnection() {
   const { state, setState } = useContext(AppContext);
 
   const [address, setAddress] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // network request with use effect
   const handleSubmit = async () => {
     console.log(address);
-    setIsSubmitting(true);
     try {
       const { data } = await axios.get(
         `${address}/information/connections/${state.currentAccount.address}`
       );
-      Alert.alert('Success', data);
+      Alert.alert('Success');
 
       //set context value
       setState({ ...state, serverIpAddress: address });
     } catch (error) {
       console.log(error);
-      Alert.alert('Error', 'some error');
+      Alert.alert('Error');
     }
-    setIsSubmitting(false);
   };
 
   const hasServerIpAddress = () => {
@@ -67,7 +64,7 @@ function SetupConnection() {
   return (
     <View>
       <Text style={styles.label}>
-        Server Ip Address:{' '}
+        Server Ip Address:
         {hasServerIpAddress() ? (
           <Text style={{ color: 'green' }}>OK</Text>
         ) : (
@@ -82,11 +79,15 @@ function SetupConnection() {
         value={address}
         defaultValue={state.serverIpAddress}
       />
-      <Button
-        title='Setup Connection'
-        onPress={handleSubmit}
-        disabled={isSubmitting}
-      />
+      {!hasServerIpAddress() && (
+        <Button title='Setup Connection' onPress={handleSubmit} />
+      )}
+      {hasServerIpAddress() && (
+        <Button
+          title='Clear Connection'
+          onPress={() => setState({ ...state, serverIpAddress: '' })}
+        />
+      )}
     </View>
   );
 }
@@ -124,7 +125,7 @@ function SetupCurrentAccount() {
   return (
     <View>
       <Text style={styles.label}>
-        Current Address:{' '}
+        Current Account:{' '}
         {hasCurrentAccount() ? (
           <Text style={{ color: 'green' }}>OK</Text>
         ) : (
@@ -142,10 +143,19 @@ function SetupCurrentAccount() {
         value={privateKey}
         defaultValue={state.currentAccount.privateKey}
       />
-      {privateKey ? (
+
+      {!hasCurrentAccount() && privateKey && (
         <Button title='Setup Account' onPress={handleSubmit} />
-      ) : (
+      )}
+      {!hasCurrentAccount() && !privateKey && (
         <Button title='Generate Account' onPress={handleSubmit} />
+      )}
+
+      {hasCurrentAccount() && (
+        <Button
+          title='Clear Account'
+          onPress={() => setState({ ...state, currentAccount: {} })}
+        />
       )}
     </View>
   );
@@ -154,11 +164,6 @@ function SetupCurrentAccount() {
 function HomeScreen({ route, navigation }) {
   const { state, setState } = useContext(AppContext);
 
-  // useEffect(() => {
-  //   const currentAccount = account.create();
-  //   console.log('current account: ', currentAccount);
-  //   setState({ currentAccount });
-  // }, []);
   const isReady = () => {
     return (
       state.serverIpAddress &&
@@ -168,68 +173,76 @@ function HomeScreen({ route, navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View>
-        <Text style={styles.title}>
-          <Text style={styles.titleText}>POMS Home</Text>
-        </Text>
-      </View>
-
-      <View style={styles.body}>
-        <SetupCurrentAccount />
-        <SetupConnection />
-      </View>
-
-      {isReady() && (
-        <View style={styles.bottom}>
-          <Button
-            title='Enroll Product'
-            onPress={() =>
-              navigation.navigate('EnrollProduct', {
-                // enroll product properties
-              })
-            }
-          />
-
-          <Button
-            title='Ship Product'
-            onPress={() =>
-              navigation.navigate('ShipProduct', {
-                // ship product properties
-              })
-            }
-          />
-
-          <Button
-            title='Receive Product'
-            onPress={() =>
-              navigation.navigate('ReceiveProduct', {
-                // receive product properties
-              })
-            }
-          />
-
-          <Button
-            title='Account Screen'
-            onPress={() =>
-              navigation.navigate('Account', {
-                // receive product properties
-              })
-            }
-          />
-
-          <Button
-            title='Test Screen'
-            onPress={() =>
-              navigation.navigate('Test', {
-                // receive product properties
-              })
-            }
-          />
+    <View style={styles.container}>
+      <SafeAreaView>
+        <View>
+          <Text style={styles.title}>
+            <Text style={styles.titleText}>POMS HOME</Text>
+          </Text>
         </View>
-      )}
-    </SafeAreaView>
+      </SafeAreaView>
+      <ScrollView automaticallyAdjustKeyboardInsets={true}>
+        <View style={styles.body}>
+          <SetupCurrentAccount />
+          <SetupConnection />
+        </View>
+
+        <Separator />
+        <View style={{ height: 30 }} />
+
+        {isReady() && (
+          <View style={styles.bottom}>
+            <Button
+              title='Enroll Product'
+              onPress={() =>
+                navigation.navigate('EnrollProduct', {
+                  // enroll product properties
+                })
+              }
+            />
+
+            <Button
+              title='Ship Product'
+              onPress={() =>
+                navigation.navigate('ShipProduct', {
+                  // ship product properties
+                })
+              }
+            />
+
+            <Button
+              title='Receive Product'
+              onPress={() =>
+                navigation.navigate('ReceiveProduct', {
+                  // receive product properties
+                })
+              }
+            />
+
+            <Button
+              title='Account Screen'
+              onPress={() =>
+                navigation.navigate('Account', {
+                  // receive product properties
+                })
+              }
+            />
+
+            {/* <Button
+              title='Test Screen'
+              onPress={() =>
+                navigation.navigate('Test', {
+                  // receive product properties
+                })
+              }
+            /> */}
+          </View>
+        )}
+      </ScrollView>
+    </View>
   );
 }
 
 export default HomeScreen;
+
+const Separator = () => <View style={styles.separator} />;

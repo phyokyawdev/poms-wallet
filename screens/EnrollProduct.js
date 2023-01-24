@@ -48,12 +48,14 @@ function EnrollProduct({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View>
-        <Text style={styles.title}>
-          <Text style={styles.titleText}>ENROLL PRODUCT</Text>
-        </Text>
-      </View>
+    <View style={styles.container}>
+      <SafeAreaView>
+        <View>
+          <Text style={styles.title}>
+            <Text style={styles.titleText}>ENROLL PRODUCT</Text>
+          </Text>
+        </View>
+      </SafeAreaView>
       <View style={styles.body}>
         <Text selectable={true} style={styles.label}>
           Product Code
@@ -77,7 +79,7 @@ function EnrollProduct({ navigation }) {
           onPress={() => navigation.navigate('Home')}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
