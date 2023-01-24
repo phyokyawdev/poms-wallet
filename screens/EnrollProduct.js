@@ -14,29 +14,36 @@ import * as transaction from '../services/transaction';
 function EnrollProduct({ navigation }) {
   const { state } = React.useContext(AppContext);
   const [productCode, setProductCode] = React.useState('');
+  const [tx, setTx] = React.useState('');
 
   const handleSubmit = async () => {
     // sign transaction
 
-    const txParams = {
-      methodName: 'enrollProduct',
-      payloads: [productCode]
-    };
+    if (!tx) {
+      const txParams = {
+        methodName: 'enrollProduct',
+        payloads: [productCode]
+      };
 
-    const tx = transaction.create(state.currentAccount.privateKey, txParams);
+      setTx(transaction.create(state.currentAccount.privateKey, txParams));
+      return;
+    }
 
     try {
+      console.log('posting', tx);
       const { data } = await axios.post(
         `${state.serverIpAddress}/transactions`,
         tx
       );
+      console.log('already posted');
 
-      Alert.alert('successfully submitted');
+      Alert.alert('successful');
 
       // reset value
       setProductCode('');
     } catch (error) {
-      Alert.alert(error.response.data);
+      console.log('error happened');
+      console.log(error);
     }
   };
 
@@ -57,7 +64,11 @@ function EnrollProduct({ navigation }) {
           onChangeText={(text) => setProductCode(text)}
           defaultValue={productCode}
         />
-        <Button title='Submit' onPress={handleSubmit} />
+        {tx ? (
+          <Button title='Submit' onPress={handleSubmit} />
+        ) : (
+          <Button title='Sign' onPress={handleSubmit} />
+        )}
       </View>
 
       <View style={styles.bottom}>

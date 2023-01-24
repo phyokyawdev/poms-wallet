@@ -20,7 +20,7 @@ export default StyleSheet.create({
   },
   body: {
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: 'flex-start'
   },
   title: {
     textAlign: 'center',

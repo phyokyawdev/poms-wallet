@@ -14,17 +14,20 @@ import * as transaction from '../services/transaction';
 
 function EnrollProduct({ navigation }) {
   const { state } = React.useContext(AppContext);
+  const [tx, setTx] = React.useState('');
   const [productCode, setProductCode] = React.useState('');
 
   const handleSubmit = async () => {
     // sign transaction
+    if (!tx) {
+      const txParams = {
+        methodName: 'receiveProduct',
+        payloads: [productCode]
+      };
 
-    const txParams = {
-      methodName: 'receiveProduct',
-      payloads: [productCode]
-    };
-
-    const tx = transaction.create(state.currentAccount.privateKey, txParams);
+      setTx(transaction.create(state.currentAccount.privateKey, txParams));
+      return;
+    }
 
     try {
       const { data } = await axios.post(
@@ -32,12 +35,13 @@ function EnrollProduct({ navigation }) {
         tx
       );
 
-      Alert.alert('successfully submitted');
+      Alert.alert('Receiving product success!');
 
       // reset value
       setProductCode('');
     } catch (error) {
-      Alert.alert(error.response.data);
+      console.log(error.response.data);
+      Alert.alert('Receiving product failed!');
     }
   };
 
@@ -56,7 +60,11 @@ function EnrollProduct({ navigation }) {
           onChangeText={(text) => setProductCode(text)}
           value={productCode}
         />
-        <Button title='Submit' onPress={handleSubmit} />
+        {tx ? (
+          <Button title='Submit' onPress={handleSubmit} />
+        ) : (
+          <Button title='Sign' onPress={handleSubmit} />
+        )}
       </View>
 
       <View style={styles.bottom}>

@@ -46,11 +46,13 @@ function SetupConnection() {
     console.log(address);
     setIsSubmitting(true);
     try {
-      await axios.get(`${address}/health`);
-      Alert.alert('Success', 'The server is up');
+      const { data } = await axios.get(
+        `${address}/information/connections/${state.currentAccount.address}`
+      );
+      Alert.alert('Success', data);
 
       //set context value
-      setState({ serverIpAddress: address, ...state });
+      setState({ ...state, serverIpAddress: address });
     } catch (error) {
       console.log(error);
       Alert.alert('Error', 'some error');
@@ -58,9 +60,21 @@ function SetupConnection() {
     setIsSubmitting(false);
   };
 
+  const hasServerIpAddress = () => {
+    return !!state.serverIpAddress;
+  };
+
   return (
     <View>
-      <Text style={styles.label}>Server Ip Address</Text>
+      <Text style={styles.label}>
+        Server Ip Address:{' '}
+        {hasServerIpAddress() ? (
+          <Text style={{ color: 'green' }}>OK</Text>
+        ) : (
+          <Text style={{ color: 'red' }}>Not setted up</Text>
+        )}
+      </Text>
+      <Text style={styles.label}>{state.serverIpAddress}</Text>
       <TextInput
         style={styles.input}
         placeholder='type ip address of server'
@@ -100,13 +114,26 @@ function SetupCurrentAccount() {
     // set up account if privateKey
     const currentAccount = account.createFromPrivateKey(privateKey);
     console.log(currentAccount);
-    setState({ currentAccount });
+    setState({ ...state, currentAccount });
+  };
+
+  const hasCurrentAccount = () => {
+    return state.currentAccount.address && state.currentAccount.privateKey;
   };
 
   return (
     <View>
       <Text style={styles.label}>
-        Current Account: {state.currentAccount.address}
+        Current Address:{' '}
+        {hasCurrentAccount() ? (
+          <Text style={{ color: 'green' }}>OK</Text>
+        ) : (
+          <Text style={{ color: 'red' }}>Not setted up</Text>
+        )}
+      </Text>
+
+      <Text selectable={true} style={styles.label}>
+        {state.currentAccount.address}
       </Text>
       <TextInput
         style={styles.input}
@@ -133,7 +160,6 @@ function HomeScreen({ route, navigation }) {
   //   setState({ currentAccount });
   // }, []);
   const isReady = () => {
-    return true;
     return (
       state.serverIpAddress &&
       state.currentAccount.privateKey &&

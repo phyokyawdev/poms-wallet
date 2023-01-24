@@ -24,6 +24,11 @@ if (typeof window === 'object') {
   }
 }
 
+// fix for axios's toJSON parsing of BigInt
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
+
 import React, { useContext } from 'react';
 import { View, Text, Button, TextInput, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';

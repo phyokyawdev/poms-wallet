@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Alert, Button, Text, TextInput, View } from 'react-native';
+import { Alert, Button, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BarCodeScanner, Constants } from 'expo-barcode-scanner';
 import AppContext from '../AppContext';
@@ -13,6 +13,7 @@ import styles from './styles';
 function ShipProduct({ navigation }) {
   const { state } = useContext(AppContext);
 
+  const [tx, setTx] = useState('');
   const [productCode, setProductCode] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
 
@@ -36,14 +37,15 @@ function ShipProduct({ navigation }) {
   };
 
   const handleSubmit = async () => {
-    // sign transaction
+    if (!tx) {
+      const txParams = {
+        methodName: 'shipProduct',
+        payloads: [recipientAddress, productCode]
+      };
 
-    const txParams = {
-      methodName: 'shipProduct',
-      payloads: [recipientAddress, productCode]
-    };
-
-    const tx = transaction.create(state.currentAccount.privateKey, txParams);
+      setTx(transaction.create(state.currentAccount.privateKey, txParams));
+      return;
+    }
 
     try {
       const { data } = await axios.post(
@@ -51,13 +53,14 @@ function ShipProduct({ navigation }) {
         tx
       );
 
-      Alert.alert('successfully submitted');
+      Alert.alert('Shipping product success!');
 
       // reset value
       setRecipientAddress('');
       setProductCode('');
     } catch (error) {
-      Alert.alert(error.response.data);
+      console.log(error.response.data);
+      Alert.alert('Shipping product failed!');
     }
   };
 
@@ -69,59 +72,65 @@ function ShipProduct({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={{ flex: 1 }}>
-        <Text style={styles.title}>
-          <Text style={styles.titleText}>Ship Product</Text>
-        </Text>
-      </View>
-
-      <View style={styles.body}>
+    <View>
+      <SafeAreaView style={styles.container}>
         <View>
-          <Text selectable={true} style={styles.label}>
-            Recipient Address
+          <Text style={styles.title}>
+            <Text style={styles.titleText}>Ship Product</Text>
           </Text>
-          <BarCodeScanner
-            barCodeTypes={[Constants.BarCodeType.qr]}
-            onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-            style={{ height: 200, margin: 12 }}
-          />
-          {scanned && (
-            <Button
-              title={'Tap to Scan Again'}
-              onPress={() => setScanned(false)}
+        </View>
+      </SafeAreaView>
+
+      <ScrollView>
+        <View style={styles.body}>
+          <View>
+            <Text selectable={true} style={styles.label}>
+              Recipient Address
+            </Text>
+            <BarCodeScanner
+              barCodeTypes={[Constants.BarCodeType.qr]}
+              onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+              style={{ height: 200, margin: 12 }}
             />
+            {scanned && (
+              <Button
+                title={'Tap to Scan Again'}
+                onPress={() => setScanned(false)}
+              />
+            )}
+          </View>
+          <View>
+            <TextInput
+              value={recipientAddress}
+              style={styles.input}
+              onChangeText={(text) => setRecipientAddress(text)}
+              placeholder='Scan QR code'
+            />
+          </View>
+          <View>
+            <Text style={styles.label}>Product Code</Text>
+            <TextInput
+              value={productCode}
+              style={styles.input}
+              placeholder='type product code'
+              onChangeText={(text) => setProductCode(text)}
+            />
+          </View>
+          {tx ? (
+            <Button title='Submit' onPress={handleSubmit} />
+          ) : (
+            <Button title='Sign' onPress={handleSubmit} />
           )}
         </View>
-        <View>
-          <TextInput
-            value={recipientAddress}
-            style={styles.input}
-            onChangeText={(text) => setRecipientAddress(text)}
-            placeholder='Scan QR code'
+
+        <View style={styles.bottom}>
+          <Button
+            title='Go to Home'
+            onPress={() => navigation.navigate('Home')}
           />
         </View>
-
-        <View>
-          <Text style={styles.label}>Product Code</Text>
-          <TextInput
-            value={productCode}
-            style={styles.input}
-            placeholder='type product code'
-            onChangeText={(text) => setProductCode(text)}
-          />
-        </View>
-
-        <Button title='Submit' onPress={handleSubmit} />
-      </View>
-
-      <View style={styles.bottom}>
-        <Button
-          title='Go to Home'
-          onPress={() => navigation.navigate('Home')}
-        />
-      </View>
-    </SafeAreaView>
+      </ScrollView>
+    </View>
   );
 }
 
