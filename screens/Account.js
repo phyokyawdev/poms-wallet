@@ -19,30 +19,39 @@ function Account({ navigation }) {
   const { state } = useContext(AppContext);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View>
-        <Text style={styles.title}>
-          <Text style={styles.titleText}>CURRENT ACCOUNT INFORMATION</Text>
-        </Text>
-      </View>
+    <View style={styles.container}>
+      <SafeAreaView>
+        <View>
+          <Text style={styles.title}>
+            <Text style={styles.titleText}>ACCOUNT INFORMATION</Text>
+          </Text>
+        </View>
+      </SafeAreaView>
+
       <View style={styles.body}>
+        <Text style={styles.label}>Current Account:</Text>
         <Text selectable={true} style={styles.label}>
           {state.currentAccount.address}
         </Text>
-        <View>
+        <View style={{ justifyContent: 'center', alignSelf: 'center' }}>
           {state.currentAccount.address && (
-            <QRCode value={state.currentAccount.address} />
+            <QRCode
+              value={state.currentAccount.address}
+              logoSize={200}
+              size={200}
+              width={200}
+              height={200}
+            />
           )}
         </View>
       </View>
-
       <View style={styles.bottom}>
         <Button
           title='Go to Home'
           onPress={() => navigation.navigate('Home')}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

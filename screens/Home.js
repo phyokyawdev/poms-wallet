@@ -13,14 +13,6 @@ import * as account from '../services/account';
  * - setup currentAccount: { privateKey, address }
  */
 
-function CurrentAccount() {
-  return (
-    <View>
-      <Text style={styles.label}>Select Currentt Account</Text>
-    </View>
-  );
-}
-
 /**
  * CONNECT TO SERVER (PING)
  * - text input (server address)
@@ -219,14 +211,14 @@ function HomeScreen({ route, navigation }) {
               }
             />
 
-            <Button
+            {/* <Button
               title='Account Screen'
               onPress={() =>
                 navigation.navigate('Account', {
                   // receive product properties
                 })
               }
-            />
+            /> */}
 
             {/* <Button
               title='Test Screen'

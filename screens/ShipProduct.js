@@ -134,8 +134,6 @@ function ShipProduct({ navigation }) {
             onPress={() => navigation.navigate('Home')}
           />
         </View>
-
-        <View style={{ height: 30 }} />
       </ScrollView>
     </View>
   );

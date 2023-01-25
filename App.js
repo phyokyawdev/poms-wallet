@@ -104,7 +104,24 @@ function App() {
             options={({ navigation, route }) => ({
               title: 'Overview',
               headerTitle: (props) => <LogoTitle {...props} />,
-              headerRight: () => <Button title='Update count' />
+              headerRight: () => {
+                const { state } = useContext(AppContext);
+
+                if (
+                  !(
+                    state.currentAccount.privateKey &&
+                    state.currentAccount.address
+                  )
+                )
+                  return;
+
+                return (
+                  <Button
+                    title='Account'
+                    onPress={() => navigation.navigate('Account')}
+                  />
+                );
+              }
             })}
           />
           <Stack.Screen
