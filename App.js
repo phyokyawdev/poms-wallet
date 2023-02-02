@@ -42,6 +42,7 @@ import Test from './screens/Test';
 import styles from './screens/styles';
 import AppContext, { AppContextProvider } from './AppContext';
 import Account from './screens/Account';
+import ProductInfo from './screens/ProductInfo';
 
 /**
  * Setup
@@ -153,6 +154,14 @@ function App() {
             component={Account}
             options={() => ({
               title: 'Account Screen',
+              headerTitle: (props) => <ServerAddress />
+            })}
+          />
+          <Stack.Screen
+            name='ProductInfo'
+            component={ProductInfo}
+            options={() => ({
+              title: 'Product Information',
               headerTitle: (props) => <ServerAddress />
             })}
           />

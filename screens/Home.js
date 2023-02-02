@@ -211,6 +211,15 @@ function HomeScreen({ route, navigation }) {
               }
             />
 
+            <Button
+              title='Product Info'
+              onPress={() =>
+                navigation.navigate('ProductInfo', {
+                  // receive product properties
+                })
+              }
+            />
+
             {/* <Button
               title='Account Screen'
               onPress={() =>
